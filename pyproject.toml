@@ -1,0 +1,146 @@
+[tool.poetry]
+name = "deriv market datahub"
+version = "1.0.0"
+description = ""
+authors = ["Omar Sabek"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+python-deriv-api = "^0.1.6"
+dlt = {version = "^0.4.7", extras = ["parquet,gs"]}
+pyarrow = "^15.0.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+flake8 = "^7.0.0"
+isort = "^5.13.2"
+pre-commit = "3.5"
+alive-progress = "^3.1.5"
+psutil = "^5.9.8"
+
+[tool.isort]
+profile = "black"
+line_length = 120
+force_single_line = false
+atomic = true
+float_to_top = true
+include_trailing_comma = true
+lines_after_imports = 2
+lines_between_types = 1
+multi_line_output = 7
+use_parentheses = false
+skip_glob = ["*/setup.py"]
+filter_files = true
+sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'AIRFLOW', 'FIRSTPARTY', 'LOCALFOLDER']
+known_airflow = ['airflow']
+ensure_newline_before_comments = true
+
+[tool.black]
+line-length = 120
+skip-string-normalization = true
+target-version = ['py312']
+include = '''
+/(
+    \.pyi?$
+  | \.pyt?$
+)/
+'''
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | tests/.*/setup.py
+)/
+'''
+
+[tool.sqlfluff.core]
+templater = "jinja"
+dialect = "bigquery"
+exclude_rules = "layout.spacing, layout.indent, layout.long_lines, ambiguous.column_count, ambiguous.join, ambiguous.column_references, capitalisation.identifiers, convention.not_equal, structure.else_null, layout.select_targets"
+
+ignore = "templating, parsing"
+max_line_length = 120
+fix_even_unparsable = true
+large_file_skip_byte_limit = 0
+processes = 0
+warn_unused_ignores = true
+
+[tool.sqlfluff.indentation]
+indented_using_on = false
+indented_on_contents = false
+indented_then = false
+indented_then_contents = false
+allow_implicit_indents = true
+template_blocks_indent = false
+
+[tool.sqlfluff.layout.type.select_clause]
+line_position = "leading"
+align_within = "select_clause"
+align_scope = "bracketed"
+
+[tool.sqlfluff.layout.type.where_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.from_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.join_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.groupby_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.orderby_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.having_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.limit_clause]
+line_position = "leading"
+
+[tool.sqlfluff.layout.type.keywords]
+spacing_before = "align"
+align_within = "select_clause"
+align_scope = "bracketed"
+
+[tool.sqlfluff.rules.structure.subquery]
+forbid_subquery_in = "both"
+
+[tool.sqlfluff.rules.capitalisation.keywords]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.literals]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.types]
+extended_capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.functions]
+extended_capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.convention.quoted_literals]
+preferred_quoted_literal_style = "single_quotes"
+
+[tool.sqlfluff.rules.references.keywords]
+ignore_words = "data, date, datetime, timestamp, time, hour, minute, week, user, version, type, source, value, Source, server, account, row, percent, name, quarter, login, language, binary, comment, usage, ml"
+
+[tool.sqlfluff.layout.type.comma]
+line_position = "leading"
+
+[tool.sqlfluff.rules.references.special_chars]
+additional_allowed_characters = "`"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
