@@ -14,3 +14,4 @@ RUN set -ex \
 
 # Add src only in final step, so changing src doesn't rebuild the image from beginning
 ADD ./src /src
+ADD ./.dlt /.dlt

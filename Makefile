@@ -41,6 +41,8 @@ clean:
 FILES ?= --all-files
 tidy: # Example: make tidy FILES="--file clickup_time_entry_prod.py"
 	@SKIP=unittest poetry run pre-commit run $(FILES)
+	@echo "Running terraform fmt"
+	@cd terraform && terraform fmt
 
 test:
 	@poetry run pre-commit run unittest

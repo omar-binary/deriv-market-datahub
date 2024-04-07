@@ -6,6 +6,7 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 
 - The gcloud CLI installed locally.
 - Terraform 0.15.3+ installed locally.
+- Docker installed locally.
 
 ## Setup
 
@@ -18,19 +19,38 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - Enable Compute Engine API: `gcloud services enable compute.googleapis.com`
 - Enable the Cloud Composer API: `gcloud services enable composer.googleapis.com`
 
+- Go to the `terraform` directory: `cd terraform`
 - Run `terraform init` to initialize the Terraform configuration.
 - Run `terraform plan` to view the resources that Terraform will create.
 - Run `terraform apply` to create the resources.
 - Run `terraform show` to view the resources that Terraform created.
 
-- Once done run `terraform destroy` to delete the resources.
+- Run the command:
 
+```bash
+cd "$(git rev-parse --show-toplevel || echo .)" && gcloud composer environments storage dags import \
+--environment airflow-composer-env  --location us-central1 \
+--source airflow/load_market_data.py
+```
+
+- Setup Artifact Registry
+
+```bash
+$ gcloud auth configure-docker us-central1-docker.pkg.dev
+$ ./build_and_push.sh
+```
+
+
+## Cleanup
+
+- Once done run `terraform destroy` to delete the resources.
+- Make sure to delete any remaining disks, as they are not automatically deleted by Terraform. [here](https://console.cloud.google.com/compute/disks)
+- Make sure to delete Bucket created by Terraform. [here](https://console.cloud.google.com/storage/browser)
 
 
 ## Plan
 
-
-filter on "market": "indices",
+- filter on "market": "indices",
 
 - active symbols and their last quote in a day
 - get historical last 30 days quotes for a symbol -> store in table
@@ -38,11 +58,11 @@ filter on "market": "indices",
 
 - load data to GCS
 - terraform GCS + service account + key
-- terraform cloud composer
+- terraform cloud composer [done]
 - dag to load data from GCS to BQ
 
 - Call deriv API to load data into GCS [done]
-- Spin up airflow using terraform
+- Spin up airflow using terraform [done]
 - Call this extraction from airflow
 - Load data into BQ using airflow operator
 - Create BQ schema

@@ -45,6 +45,24 @@ resource "google_project_iam_member" "airflow_composer" {
   member  = "serviceAccount:${google_service_account.airflow.email}"
 }
 
+resource "google_project_iam_member" "airflow_logging" {
+  project = var.project_id
+  role    = "roles/logging.admin"
+  member  = "serviceAccount:${google_service_account.airflow.email}"
+}
+
+resource "google_project_iam_member" "airflow_storage" {
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.airflow.email}"
+}
+
+resource "google_project_iam_member" "airflow_bigquery" {
+  project = var.project_id
+  role    = "roles/bigquery.admin"
+  member  = "serviceAccount:${google_service_account.airflow.email}"
+}
+
 resource "google_service_account_iam_member" "airflow_service_agent" {
   service_account_id = google_service_account.airflow.name
   role               = "roles/composer.ServiceAgentV2Ext"
@@ -62,8 +80,6 @@ resource "google_composer_environment" "airflow" {
       }
 
       pypi_packages = {
-        numpy = ""
-        scipy = "==1.1.0"
       }
 
       env_variables = {
@@ -126,4 +142,28 @@ resource "google_storage_bucket" "market-data" {
   force_destroy               = true
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
+}
+
+# Artifact Registry
+resource "google_artifact_registry_repository" "artifact-repo" {
+  location               = "us-central1"
+  repository_id          = "my-repository"
+  description            = "docker repository"
+  format                 = "DOCKER"
+  cleanup_policy_dry_run = false
+  cleanup_policies {
+    id     = "delete-prerelease"
+    action = "DELETE"
+    condition {
+      tag_state  = "ANY"
+      older_than = "86400s"
+    }
+  }
+  cleanup_policies {
+    id     = "keep-minimum-versions"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 2
+    }
+  }
 }

@@ -6,6 +6,10 @@ output "airflow_uri" {
   value = google_composer_environment.airflow.config.0.airflow_uri
 }
 
+output "dag_gcs_prefix" {
+  value = google_composer_environment.airflow.config.0.dag_gcs_prefix
+}
+
 output "environment_size" {
   value = google_composer_environment.airflow.config.0.environment_size
 }
