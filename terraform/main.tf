@@ -19,7 +19,7 @@ provider "google" {
 resource "google_project_service" "composer_api" {
   project            = var.project_id
   service            = "composer.googleapis.com"
-  disable_on_destroy = true
+  disable_on_destroy = false
 }
 
 resource "google_compute_network" "airflow" {
@@ -37,6 +37,11 @@ resource "google_compute_subnetwork" "airflow" {
 resource "google_service_account" "airflow" {
   account_id   = "airflow-composer-sa"
   display_name = "Service Account for Airflow Composer Environment"
+}
+
+resource "google_service_account_key" "airflow" {
+  service_account_id = google_service_account.airflow.name
+  public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
 resource "google_project_iam_member" "airflow_composer" {
@@ -83,7 +88,10 @@ resource "google_composer_environment" "airflow" {
       }
 
       env_variables = {
-        FOO = "bar"
+        PROJECT_ID           = var.project_id
+        AIRFLOW_PRIVATE_KEY  = google_service_account_key.airflow.private_key
+        AIRFLOW_CLIENT_EMAIL = google_service_account.airflow.email
+        STAGING_BUCKET_URL   = "gs://${google_storage_bucket.market-data.name}"
       }
     }
     workloads_config {
@@ -145,9 +153,9 @@ resource "google_storage_bucket" "market-data" {
 }
 
 # Artifact Registry
-resource "google_artifact_registry_repository" "artifact-repo" {
+resource "google_artifact_registry_repository" "main" {
   location               = "us-central1"
-  repository_id          = "my-repository"
+  repository_id          = "main"
   description            = "docker repository"
   format                 = "DOCKER"
   cleanup_policy_dry_run = false
