@@ -13,10 +13,11 @@
 - Update composer environment with service account key [done]
 - Update composer connection with environment variables [done] (change env variables to pass docker image and replace secrets.toml)
 - Create artifact registry [done]
-- Add airflow connection to be used in docker operator
-- Test airflow dag
-- Clone airflow dag to multiple dags
-- Create a dag calling the docker image multiple times
+- Add airflow connection to be used in docker operator [done]
+- Test airflow dag [done]
+- Clone airflow dag to multiple dags [done]
+- Create a dag calling the docker image multiple times [done]
+- change dag to loop over list which contains the list of symbols [so we tick/candle for each symbol] !!!!!
 - Create a dag to load data from GCS to BQ
 - Add BQ table schema `staging`
 - Add dbt core and call it from airflow using docker operator (or just load data into BQ, using airflow operator)

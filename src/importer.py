@@ -28,16 +28,9 @@ def parse_args():
 
 
 def main():
-    logging.info('Starting importer')
     args = parse_args()
+    logging.info(f'Starting importer with args: {args}')
 
-    # add extra from environment variables
-    # args.credentials = os.environ['CREDENTIALS']
-
-    # TODO: add the following to replace secrets.toml file, Expected from environment variables secrets to override the default values
-    # DESTINATION__FILESYSTEM__CREDENTIALS__PROJECT_ID
-    # DESTINATION__FILESYSTEM__CREDENTIALS__PRIVATE_KEY
-    # DESTINATION__FILESYSTEM__CREDENTIALS__CLIENT_EMAIL
     import deriv
 
     deriv.run(args)

@@ -15,6 +15,30 @@ provider "google" {
   zone   = var.zone
 }
 
+# Artifact Registry
+resource "google_artifact_registry_repository" "main" {
+  location               = "us-central1"
+  repository_id          = "main"
+  description            = "docker repository"
+  format                 = "DOCKER"
+  cleanup_policy_dry_run = false
+  cleanup_policies {
+    id     = "delete-prerelease"
+    action = "DELETE"
+    condition {
+      tag_state  = "ANY"
+      older_than = "86400s"
+    }
+  }
+  cleanup_policies {
+    id     = "keep-minimum-versions"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 2
+    }
+  }
+}
+
 # Airflow Composer
 resource "google_project_service" "composer_api" {
   project            = var.project_id
@@ -68,6 +92,12 @@ resource "google_project_iam_member" "airflow_bigquery" {
   member  = "serviceAccount:${google_service_account.airflow.email}"
 }
 
+resource "google_project_iam_member" "airflow_artifactregistry" {
+  project = var.project_id
+  role    = "roles/artifactregistry.admin"
+  member  = "serviceAccount:${google_service_account.airflow.email}"
+}
+
 resource "google_service_account_iam_member" "airflow_service_agent" {
   service_account_id = google_service_account.airflow.name
   role               = "roles/composer.ServiceAgentV2Ext"
@@ -81,14 +111,18 @@ resource "google_composer_environment" "airflow" {
     software_config {
       image_version = "composer-2-airflow-2"
       airflow_config_overrides = {
-        core-dags_are_paused_at_creation = "True"
+        core-dags_are_paused_at_creation = "True",
+        scheduler-dag_dir_list_interval  = 60
       }
 
       pypi_packages = {
+        apache-airflow-providers-docker = ""
+        apache-airflow-providers-google = ""
+
       }
 
       env_variables = {
-        PROJECT_ID           = var.project_id
+        GCP_PROJECT_ID       = var.project_id
         AIRFLOW_PRIVATE_KEY  = google_service_account_key.airflow.private_key
         AIRFLOW_CLIENT_EMAIL = google_service_account.airflow.email
         STAGING_BUCKET_URL   = "gs://${google_storage_bucket.market-data.name}"
@@ -150,28 +184,4 @@ resource "google_storage_bucket" "market-data" {
   force_destroy               = true
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
-}
-
-# Artifact Registry
-resource "google_artifact_registry_repository" "main" {
-  location               = "us-central1"
-  repository_id          = "main"
-  description            = "docker repository"
-  format                 = "DOCKER"
-  cleanup_policy_dry_run = false
-  cleanup_policies {
-    id     = "delete-prerelease"
-    action = "DELETE"
-    condition {
-      tag_state  = "ANY"
-      older_than = "86400s"
-    }
-  }
-  cleanup_policies {
-    id     = "keep-minimum-versions"
-    action = "KEEP"
-    most_recent_versions {
-      keep_count = 2
-    }
-  }
 }

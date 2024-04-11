@@ -41,15 +41,37 @@ $ ./build_and_push.sh "latest" "main" "vital-scout-418612" "us-central1"
 - Upload the DAG to the Composer environment using the following command:
 
 ```bash
-cd "$(git rev-parse --show-toplevel || echo .)" && gcloud composer environments storage dags import \
+$ gcloud composer environments storage dags import \
 --environment airflow-composer-env  --location us-central1 \
---source airflow/load_market_data.py
+--source airflow/load_market_static_data.py
+
+$ gcloud composer environments storage dags import \
+--environment airflow-composer-env  --location us-central1 \
+--source airflow/load_market_ticks_history_data.py
+
+$ gcloud composer environments storage dags import \
+--environment airflow-composer-env  --location us-central1 \
+--source airflow/load_market_candles_history_data.py
 ```
 
-- Update composer with connection and environment variables
+## BQ
 
-
-
+```sql
+CREATE EXTERNAL TABLE `vital-scout-418612.staging.tick_ty3`
+(
+  style STRING,
+  ticks_history STRING,
+  price STRING,
+  time NUMERIC,
+  pip_size NUMERIC,
+  _dlt_load_id STRING,
+  _dlt_id STRING
+)
+OPTIONS(
+  format="PARQUET",
+  uris=["gs://staging-market-datahub/market_data/ticks_history/*"]
+);
+```
 
 ## Cleanup
 

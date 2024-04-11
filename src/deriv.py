@@ -8,7 +8,7 @@ import dlt
 from deriv_api import DerivAPI
 
 
-APP_ID = 1089
+APP_ID = 16929
 
 
 def load_to_gcs(data, pipeline_name, dataset_name, table_name, loader_file_format, write_disposition):
@@ -80,7 +80,7 @@ async def load_asset_to_data_lake(**kwargs):
     logging.info(f'details: {load_info.load_packages[0]}')
 
 
-async def load_county_to_data_lake(**kwargs):
+async def load_country_to_data_lake(**kwargs):
     api = DerivAPI(app_id=APP_ID)
 
     asset_index = await api.cache.residence_list({'residence_list': 1})
@@ -116,7 +116,7 @@ async def load_ticks_history_to_data_lake(**kwargs):
     ticks_history = {
         'style': ticks_result['echo_req']['style'],
         'ticks_history': ticks_result['echo_req']['ticks_history'],
-        'price': ticks_result['history']['prices'][0],
+        'price': str(ticks_result['history']['prices'][0]),
         'time': ticks_result['history']['times'][0],
         'pip_size': ticks_result['pip_size'],
     }
@@ -135,7 +135,7 @@ async def load_ticks_history_to_data_lake(**kwargs):
     logging.info(f'details: {load_info.load_packages[0]}')
 
 
-async def load_ticks_candle_to_data_lake(**kwargs):
+async def load_candles_history_to_data_lake(**kwargs):
     api = DerivAPI(app_id=APP_ID)
 
     candle_result = await api.cache.ticks_history(
@@ -181,18 +181,15 @@ def run(args):
     RESOURCE_NAME_TO_FUNCTION = {
         'assets': load_asset_to_data_lake,
         'symbols': load_symbols_to_data_lake,
-        'countries': load_county_to_data_lake,
+        'countries': load_country_to_data_lake,
         'ticks_history': load_ticks_history_to_data_lake,
-        'candles_history': load_ticks_candle_to_data_lake,
+        'candles_history': load_candles_history_to_data_lake,
     }
 
     try:
         function = RESOURCE_NAME_TO_FUNCTION[args.resource_name]
         asyncio.run(function(**vars(args)))
 
-    except KeyError as e:
-        logging.error(f'KeyError: {e}')
-    except TypeError as e:
-        logging.error(f'TypeError: {e}')
     except Exception as e:
         logging.error(f'Unexpected error: {e}')
+        raise Exception(f'Unexpected error: {e}')
