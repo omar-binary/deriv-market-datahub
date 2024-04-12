@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 
 
 default_args = {
@@ -16,7 +17,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 5,
-    'retry_delay': timedelta(minutes=10),
+    'retry_delay': timedelta(minutes=1),
 }
 
 symbols_list = ['R_50', 'OTC_NDX', 'OTC_DJI', 'cryBTCUSD']
@@ -32,7 +33,7 @@ with DAG(
     dagrun_timeout=timedelta(minutes=120),
 ):
     for symbol in symbols_list:
-        extract_candles_history = KubernetesPodOperator(
+        extract_ticks_history = KubernetesPodOperator(
             namespace='composer-user-workloads',
             image='us-central1-docker.pkg.dev/vital-scout-418612/main/market_data_loader:latest',
             cmds=['poetry', 'run', 'python3', 'importer.py'],
@@ -46,8 +47,8 @@ with DAG(
                 '--end',
                 '{{ execution_date.int_timestamp }}',
             ],
-            name=f'pod-extract-{symbol}-candles-history',
-            task_id=f'pod-extract-{symbol}-candles-history',
+            name=f'pod-extract-{symbol}-ticks-history',
+            task_id=f'pod-extract-{symbol}-ticks-history',
             config_file='/home/airflow/composer_kube_config',
             env_vars={
                 'DESTINATION__FILESYSTEM__CREDENTIALS__PROJECT_ID': os.environ['GCP_PROJECT_ID'],
@@ -59,3 +60,17 @@ with DAG(
             },
             get_logs=True,
         )
+
+        load_bq_from_data_lake = GCSToBigQueryOperator(
+            task_id=f"gcs_to_bigquery_{symbol}",
+            bucket='staging-market-datahub',
+            source_objects=['market_data/ticks_history/*.parquet'],
+            destination_project_dataset_table='staging.ticks_history',
+            # schema_fields=schema_fields,
+            source_format='PARQUET',
+            write_disposition='WRITE_TRUNCATE',
+            external_table=True,
+            autodetect=True,
+        )
+
+        extract_ticks_history >> load_bq_from_data_lake

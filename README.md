@@ -1,12 +1,35 @@
 # deriv-market-datahub
 
+## Problem description
+
+TODO: add Problem description
+We would like to analyze the market data for indices and track daily changes in market.
+
+In order to do that we will be using the [Deriv API](https://api.deriv.com/) to fetch the needed data. The Deriv API provides a way to fetch the market data for indices and other assets. you may refer to the API documentation [here](https://api.deriv.com/api-explorer).
+we will be interested in:
+
+- Dimensions: **Symbol**, **Country**, **Asset**
+- **Closing tick** for couple of selective group of active symbols and store them in BigQuery. We would also like to store the historical data for the last 30 days for each symbol in BigQuery.
+- **Daily candle** data for the last 30 days for each of those symbols in BigQuery.
+
+## Solution
+
+- We are looking to extract market data then store it in BigQuery for further analysis which will be used to create a dashboard in Data Studio.
+- Starting with create a data pipeline that will fetch the last tick for some active symbols and store them in [GCS](https://cloud.google.com/storage?hl=en) which will be our data lake. We would also like to store the historical data for the last 30 days for each symbol then we will load it into our data-warehouse which is BigQuery.
+
+- The data pipeline will be created using Google Cloud Composer, which is a fully managed workflow orchestration service that empowers you to author, schedule, and monitor pipelines that span across clouds and on-premises data centers.
+
+- Next modelling our data using [dbt](https://www.getdbt.com/), dbt is a command line tool that enables data analysts and engineers to transform data in their warehouse more effectively.
+
+- Finally, we will create a dashboard in Data Studio to visualize the data.
+
 ## Prerequisites
 
 A Google Cloud Platform account. If you do not have a [GCP account](https://console.cloud.google.com/cloud-resource-manager), create one now from [here](https://console.cloud.google.com/projectcreate).
 
-- The gcloud CLI installed locally.
-- Terraform 0.15.3+ installed locally.
-- Docker installed locally.
+- The [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed locally.
+- [Terraform](https://developer.hashicorp.com/terraform/install) 0.15.3+ installed locally.
+- [Docker](https://www.docker.com/products/docker-desktop/) installed locally.
 
 ## Setup
 
@@ -24,54 +47,9 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - Go to the `terraform` directory: `cd terraform`
 - Run `terraform init` to initialize the Terraform configuration.
 - Run `terraform plan` to view the resources that Terraform will create.
-- Run `terraform apply` to create the resources.
+- Run `terraform apply -auto-approve` to create the resources.
 - Run `terraform show` to view the resources that Terraform created.
 
-### Artifact Registry
-
-```bash
-$ gcloud auth configure-docker us-central1-docker.pkg.dev
-# $ ./build_and_push.sh $TAG $REPOSITORY $PROJECT_ID $REGION
-$ ./build_and_push.sh "latest" "main" "vital-scout-418612" "us-central1"
-# docker pull us-central1-docker.pkg.dev/vital-scout-418612/main/market_data_loader:latest
-```
-
-### Airflow
-
-- Upload the DAG to the Composer environment using the following command:
-
-```bash
-$ gcloud composer environments storage dags import \
---environment airflow-composer-env  --location us-central1 \
---source airflow/load_market_static_data.py
-
-$ gcloud composer environments storage dags import \
---environment airflow-composer-env  --location us-central1 \
---source airflow/load_market_ticks_history_data.py
-
-$ gcloud composer environments storage dags import \
---environment airflow-composer-env  --location us-central1 \
---source airflow/load_market_candles_history_data.py
-```
-
-## BQ
-
-```sql
-CREATE EXTERNAL TABLE `vital-scout-418612.staging.tick_ty3`
-(
-  style STRING,
-  ticks_history STRING,
-  price STRING,
-  time NUMERIC,
-  pip_size NUMERIC,
-  _dlt_load_id STRING,
-  _dlt_id STRING
-)
-OPTIONS(
-  format="PARQUET",
-  uris=["gs://staging-market-datahub/market_data/ticks_history/*"]
-);
-```
 
 ## Cleanup
 

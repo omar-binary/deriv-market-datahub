@@ -1,27 +1,18 @@
 output "airflow_id" {
   value = google_composer_environment.airflow.id
 }
-
 output "airflow_uri" {
   value = google_composer_environment.airflow.config.0.airflow_uri
 }
-
-output "dag_gcs_prefix" {
+output "dag_gcs_bucket" {
   value = google_composer_environment.airflow.config.0.dag_gcs_prefix
 }
-
-output "environment_size" {
-  value = google_composer_environment.airflow.config.0.environment_size
+output "airflow_service_account" {
+  value = google_composer_environment.airflow.config.0.node_config.0.service_account
 }
-
-output "node_count" {
-  value = google_composer_environment.airflow.config.0.node_count
+output "airflow_google_service_account" {
+  value = google_service_account.airflow.email
 }
-
-output "python_version" {
-  value = google_composer_environment.airflow.config.0.software_config.0.python_version
-}
-
-output "scheduler_count" {
-  value = google_composer_environment.airflow.config.0.software_config.0.scheduler_count
+output "market_data_bucket" {
+  value = google_storage_bucket.market-data.url
 }

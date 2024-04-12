@@ -27,9 +27,9 @@ def load_to_gcs(data, pipeline_name, dataset_name, table_name, loader_file_forma
         loader_file_format=loader_file_format,
     )
     # we reuse the pipeline instance below and load to the same dataset as data
-    pipeline.run([load_info], table_name='_load_info', loader_file_format=loader_file_format)
+    # pipeline.run([load_info], table_name='_load_info', loader_file_format=loader_file_format)
     # save trace to destination, sensitive data will be removed
-    pipeline.run([pipeline.last_trace], table_name='_trace', loader_file_format=loader_file_format)
+    # pipeline.run([pipeline.last_trace], table_name='_trace', loader_file_format=loader_file_format)
 
     # # print human friendly extract information
     # logging.info(pipeline.last_trace.last_extract_info)
@@ -51,7 +51,7 @@ async def load_symbols_to_data_lake(**kwargs):
         data=active_symbols['active_symbols'],
         pipeline_name='deriv_symbols',
         dataset_name='market_data',
-        table_name='symbols',
+        table_name=kwargs['resource_name'],
         loader_file_format='parquet',
         write_disposition='replace',
     )
@@ -70,7 +70,7 @@ async def load_asset_to_data_lake(**kwargs):
         data=asset_index['asset_index'],
         pipeline_name='deriv_asset_index',
         dataset_name='market_data',
-        table_name='asset_index',
+        table_name=kwargs['resource_name'],
         loader_file_format='parquet',
         write_disposition='replace',
     )
@@ -89,7 +89,7 @@ async def load_country_to_data_lake(**kwargs):
         data=asset_index['residence_list'],
         pipeline_name='deriv_residence_list',
         dataset_name='market_data',
-        table_name='residence_list',
+        table_name=kwargs['resource_name'],
         loader_file_format='parquet',
         write_disposition='replace',
     )
@@ -125,7 +125,7 @@ async def load_ticks_history_to_data_lake(**kwargs):
         data=[ticks_history],
         pipeline_name='deriv_ticks_history',
         dataset_name='market_data',
-        table_name='ticks_history',
+        table_name=kwargs['resource_name'],
         loader_file_format='parquet',
         write_disposition='append',
     )
@@ -165,7 +165,7 @@ async def load_candles_history_to_data_lake(**kwargs):
         data=[candle_history],
         pipeline_name='deriv_candles_history',
         dataset_name='market_data',
-        table_name='candles_history',
+        table_name=kwargs['resource_name'],
         loader_file_format='parquet',
         write_disposition='append',
     )

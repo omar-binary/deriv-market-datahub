@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 
 
 default_args = {
@@ -16,7 +17,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 5,
-    'retry_delay': timedelta(minutes=10),
+    'retry_delay': timedelta(minutes=1),
 }
 
 symbols_list = ['R_50', 'OTC_NDX', 'OTC_DJI', 'cryBTCUSD']
@@ -59,3 +60,17 @@ with DAG(
             },
             get_logs=True,
         )
+
+        load_bq_from_data_lake = GCSToBigQueryOperator(
+            task_id=f"gcs_to_bigquery_{symbol}",
+            bucket='staging-market-datahub',
+            source_objects=['market_data/candles_history/*.parquet'],
+            destination_project_dataset_table='staging.candles_history',
+            # schema_fields=schema_fields,
+            source_format='PARQUET',
+            write_disposition='WRITE_TRUNCATE',
+            external_table=True,
+            autodetect=True,
+        )
+
+        extract_candles_history >> load_bq_from_data_lake

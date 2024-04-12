@@ -17,8 +17,8 @@ provider "google" {
 
 # Artifact Registry
 resource "google_artifact_registry_repository" "main" {
-  location               = "us-central1"
-  repository_id          = "main"
+  location               = var.region
+  repository_id          = var.artifact_registry_repository
   description            = "docker repository"
   format                 = "DOCKER"
   cleanup_policy_dry_run = false
@@ -39,6 +39,31 @@ resource "google_artifact_registry_repository" "main" {
   }
 }
 
+# Dlt staging datalake bucket
+resource "google_storage_bucket" "market-data" {
+  name                        = var.market_data_bucket
+  location                    = var.region
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+}
+
+# BigQuery
+resource "google_bigquery_dataset" "staging" {
+  dataset_id    = var.bigquery_dataset_id
+  friendly_name = var.bigquery_dataset_id
+  description   = "staging dataset for first layer of data processing"
+  location      = var.location
+  labels = {
+    env = "default"
+  }
+  access {
+    role   = "roles/bigquery.admin"
+    domain = google_service_account.airflow.email
+  }
+  delete_contents_on_destroy = true
+}
+
 # Airflow Composer
 resource "google_project_service" "composer_api" {
   project            = var.project_id
@@ -53,13 +78,13 @@ resource "google_compute_network" "airflow" {
 
 resource "google_compute_subnetwork" "airflow" {
   name          = "airflow-composer-subnetwork"
-  ip_cidr_range = "10.2.0.0/16"
+  ip_cidr_range = var.airflow_ip_cidr_range
   region        = var.region
   network       = google_compute_network.airflow.id
 }
 
 resource "google_service_account" "airflow" {
-  account_id   = "airflow-composer-sa"
+  account_id   = var.airflow_service_account
   display_name = "Service Account for Airflow Composer Environment"
 }
 
@@ -105,7 +130,7 @@ resource "google_service_account_iam_member" "airflow_service_agent" {
 }
 
 resource "google_composer_environment" "airflow" {
-  name   = "airflow-composer-env"
+  name   = var.airflow_name
   region = var.region
   config {
     software_config {
@@ -141,15 +166,15 @@ resource "google_composer_environment" "airflow" {
         storage_gb = 1
       }
       worker {
-        cpu        = 0.5
-        memory_gb  = 1.875
+        cpu        = 1
+        memory_gb  = 2
         storage_gb = 1
         min_count  = 1
         max_count  = 3
       }
 
     }
-    environment_size = "ENVIRONMENT_SIZE_SMALL"
+    # environment_size = "ENVIRONMENT_SIZE_SMALL"
 
     node_config {
       network         = google_compute_network.airflow.id
@@ -159,29 +184,9 @@ resource "google_composer_environment" "airflow" {
   }
 }
 
-
-# Dlt loader
-resource "google_service_account" "dlt" {
-  account_id   = "dlt-loader"
-  display_name = "Service Account for DLT to load data into GCP"
-}
-
-resource "google_project_iam_member" "dlt_bigquery" {
-  project = var.project_id
-  role    = "roles/bigquery.admin"
-  member  = "serviceAccount:${google_service_account.dlt.email}"
-}
-
-resource "google_project_iam_member" "dlt_storage" {
-  project = var.project_id
-  role    = "roles/storage.admin"
-  member  = "serviceAccount:${google_service_account.dlt.email}"
-}
-
-resource "google_storage_bucket" "market-data" {
-  name                        = "staging-market-datahub"
-  location                    = var.region
-  force_destroy               = true
-  uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
+# run local-exec after the resource is created
+resource "null_resource" "post-setup" {
+  provisioner "local-exec" {
+    command = "/bin/bash post-setup.sh 'latest' '${var.artifact_registry_repository}' '${var.project_id}' '${var.region}' '${var.airflow_name}'"
+  }
 }
