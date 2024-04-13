@@ -63,6 +63,9 @@ we will be interested in:
 
 ## Architecture
 
+TODO: add Architecture diagram
+
+
 ## Prerequisites
 
 A Google Cloud Platform account. If you do not have a [GCP account](https://console.cloud.google.com/cloud-resource-manager), create one now from [here](https://console.cloud.google.com/projectcreate).
