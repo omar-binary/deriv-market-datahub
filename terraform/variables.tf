@@ -16,7 +16,7 @@ variable "zone" {
 }
 
 variable "market_data_bucket" {
-  default     = "staging-market-datahub"
+  default     = "staging-market-datahub-test"
   description = "Data Lake bucket of market data"
 }
 
@@ -25,7 +25,7 @@ variable "artifact_registry_repository" {
 }
 
 variable "airflow_name" {
-  default = "airflow-composer-env"
+  default = "airflow-composer"
 }
 variable "airflow_service_account" {
   default = "airflow-composer-sa"

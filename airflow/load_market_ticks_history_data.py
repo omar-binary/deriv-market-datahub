@@ -35,7 +35,7 @@ with DAG(
     for symbol in symbols_list:
         extract_ticks_history = KubernetesPodOperator(
             namespace='composer-user-workloads',
-            image='us-central1-docker.pkg.dev/vital-scout-418612/main/market_data_loader:latest',
+            image=f'{os.environ["GCP_REGION"]}-docker.pkg.dev/{os.environ["GCP_PROJECT_ID"]}/main/market_data_loader:latest',
             cmds=['poetry', 'run', 'python3', 'importer.py'],
             arguments=[
                 '--resource_name',
@@ -63,7 +63,7 @@ with DAG(
 
         load_bq_from_data_lake = GCSToBigQueryOperator(
             task_id=f"gcs_to_bigquery_{symbol}",
-            bucket='staging-market-datahub',
+            bucket=os.environ['STAGING_BUCKET'],
             source_objects=['market_data/ticks_history/*.parquet'],
             destination_project_dataset_table='staging.ticks_history',
             # schema_fields=schema_fields,

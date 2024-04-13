@@ -42,7 +42,7 @@ with DAG(
         if '__' not in dimension:
             extract_dimension = KubernetesPodOperator(
                 namespace='composer-user-workloads',
-                image='us-central1-docker.pkg.dev/vital-scout-418612/main/market_data_loader:latest',
+                image=f'{os.environ["GCP_REGION"]}-docker.pkg.dev/{os.environ["GCP_PROJECT_ID"]}/main/market_data_loader:latest',
                 cmds=['poetry', 'run', 'python3', 'importer.py'],
                 arguments=['--resource_name', dimension],
                 name=f'pod-extract-{dimension}',
@@ -61,7 +61,7 @@ with DAG(
 
         load_bq_from_data_lake = GCSToBigQueryOperator(
             task_id=f"gcs_to_bigquery_{dimension}",
-            bucket='staging-market-datahub',
+            bucket=os.environ['STAGING_BUCKET'],
             source_objects=[f"market_data/{dimension}/*.parquet"],
             destination_project_dataset_table=f"staging.{dimension}",
             # schema_fields=schema_fields,

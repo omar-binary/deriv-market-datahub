@@ -23,6 +23,46 @@ we will be interested in:
 
 - Finally, we will create a dashboard in Data Studio to visualize the data.
 
+## Tools and Technologies
+
+1- Cloud Services
+
+- Google Cloud Platform (GCP)
+- Terraform (IaC)
+- `local-exec` provisioner (for running local scripts to fully automate the setup)
+
+2- Data Extraction and Ingestion:
+
+- WebSocket API
+- Deriv API
+- Artifacts Registry (Docker Image)
+- DLT (Data Load Tool)
+
+3- Data Lake:
+
+- Google Cloud Storage (GCS)
+
+4- Data Warehousing:
+
+- Google BigQuery (BQ)
+
+5- Data Transformations and Processing:
+
+- Airflow (Google Cloud Composer)
+
+6- Orchestration and Automation:
+
+- Airflow (Google Cloud Composer)
+- KubernetesPodOperator
+- GCSToBigQueryOperator
+
+7- Dashboard and Visualization:
+
+- Google Looker Studio
+- Check the dashboard [here]().
+
+## Architecture
+
 ## Prerequisites
 
 A Google Cloud Platform account. If you do not have a [GCP account](https://console.cloud.google.com/cloud-resource-manager), create one now from [here](https://console.cloud.google.com/projectcreate).
@@ -41,6 +81,8 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - Display the project Number for your Google Cloud projects: `gcloud projects describe YOUR_PROJECT_ID`
 - Open `terraform.tfvars` in your text editor, and paste in the configuration below. Be sure to replace <PROJECT_ID> with your project's ID, and <PROJECT_NUMBER> project with your project's Number then save the file.
 
+- Open `variables.tf` in your text editor, replace <market_data_bucket> default value with your selected name then save the file. (as bucket names should be unique across all GCP projects)
+
 - Enable Compute Engine API: `gcloud services enable compute.googleapis.com`
 - Enable the Cloud Composer API: `gcloud services enable composer.googleapis.com`
 
@@ -50,6 +92,10 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - Run `terraform apply -auto-approve` to create the resources.
 - Run `terraform show` to view the resources that Terraform created.
 
+### Composer Note
+
+Due to Quotas limit on the size of environments and amount of workers, you may need to run the dags in batches by enabling them one by one.
+Avoid running all the dags at once, as it may exceed the worker quota limit and cause the worker environment to fail.
 
 ## Cleanup
 

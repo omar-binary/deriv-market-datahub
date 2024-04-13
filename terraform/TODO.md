@@ -20,9 +20,13 @@
 - change dag to loop over list which contains the list of symbols [so we tick/candle for each symbol] [done]
 - Create a dag to load data from GCS to BQ [done]
 - Add BQ table schema `staging` [done]
-- add dbt core image setup dbt
+- test the dag make sure all the data is loaded into BQ [done]
+- add dbt core image setup dbt !!!!
 - create dbt project and hierarchy
 - create dbt models
 - Add dbt core and call it from airflow using docker operator (or just load data into BQ, using airflow operator)
 - Use DBT to move data from staging to `main` schema
-- Create a dashboard in data studio
+- Create a dashboard in data studio [TODO: !!!!!]
+
+- make bucket name as variable and pass it to airflow and update it in the dag [done]
+- add note for the bucket name, as bucket name should be unique across all GCP projects [done]

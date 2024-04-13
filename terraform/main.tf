@@ -57,10 +57,6 @@ resource "google_bigquery_dataset" "staging" {
   labels = {
     env = "default"
   }
-  access {
-    role   = "roles/bigquery.admin"
-    domain = google_service_account.airflow.email
-  }
   delete_contents_on_destroy = true
 }
 
@@ -130,13 +126,14 @@ resource "google_service_account_iam_member" "airflow_service_agent" {
 }
 
 resource "google_composer_environment" "airflow" {
+  depends_on = [google_service_account_iam_member.airflow_service_agent]
   name   = var.airflow_name
   region = var.region
   config {
     software_config {
       image_version = "composer-2-airflow-2"
       airflow_config_overrides = {
-        core-dags_are_paused_at_creation = "True",
+        # core-dags_are_paused_at_creation = "True",
         scheduler-dag_dir_list_interval  = 60
       }
 
@@ -148,9 +145,11 @@ resource "google_composer_environment" "airflow" {
 
       env_variables = {
         GCP_PROJECT_ID       = var.project_id
+        GCP_REGION           = var.region
         AIRFLOW_PRIVATE_KEY  = google_service_account_key.airflow.private_key
         AIRFLOW_CLIENT_EMAIL = google_service_account.airflow.email
         STAGING_BUCKET_URL   = "gs://${google_storage_bucket.market-data.name}"
+        STAGING_BUCKET       = var.market_data_bucket
       }
     }
     workloads_config {
@@ -166,15 +165,15 @@ resource "google_composer_environment" "airflow" {
         storage_gb = 1
       }
       worker {
-        cpu        = 1
-        memory_gb  = 2
+        cpu        = 0.5
+        memory_gb  = 1.875
         storage_gb = 1
         min_count  = 1
         max_count  = 3
       }
 
     }
-    # environment_size = "ENVIRONMENT_SIZE_SMALL"
+    environment_size = "ENVIRONMENT_SIZE_SMALL"
 
     node_config {
       network         = google_compute_network.airflow.id
@@ -186,6 +185,7 @@ resource "google_composer_environment" "airflow" {
 
 # run local-exec after the resource is created
 resource "null_resource" "post-setup" {
+  depends_on = [google_composer_environment.airflow,  google_bigquery_dataset.staging, google_artifact_registry_repository.main]
   provisioner "local-exec" {
     command = "/bin/bash post-setup.sh 'latest' '${var.artifact_registry_repository}' '${var.project_id}' '${var.region}' '${var.airflow_name}'"
   }
