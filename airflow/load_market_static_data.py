@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.operators.dagrun_operator import TriggerDagRunOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 
 
@@ -72,3 +73,11 @@ with DAG(
         )
 
         extract_dimension >> load_bq_from_data_lake
+
+    trigger_dbt_dag = TriggerDagRunOperator(
+        task_id='trigger_dbt_dag',
+        trigger_dag_id='dbt_create_model',
+        reset_dag_run=True,
+    )
+
+    load_bq_from_data_lake >> trigger_dbt_dag

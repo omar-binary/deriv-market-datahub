@@ -21,12 +21,15 @@
 - Create a dag to load data from GCS to BQ [done]
 - Add BQ table schema `staging` [done]
 - test the dag make sure all the data is loaded into BQ [done]
-- add dbt core image setup dbt !!!!
-- create dbt project and hierarchy
-- create dbt models
-- Add dbt core and call it from airflow using docker operator (or just load data into BQ, using airflow operator)
-- Use DBT to move data from staging to `main` schema
+- add dbt core image setup dbt [done]
+- create dbt project and hierarchy [done]
+- create dbt models [done]
+- Add dbt core and call it from airflow using docker operator (or just load data into BQ, using airflow operator) [done]
+- Use DBT to move data from staging to `main` schema [done]
 - Create a dashboard in data studio [TODO: !!!!!]
 
 - make bucket name as variable and pass it to airflow and update it in the dag [done]
 - add note for the bucket name, as bucket name should be unique across all GCP projects [done]
+
+- change symbol_type empty value to be replace with `other`  [done]
+- tick history: convert time to timestamp [done]

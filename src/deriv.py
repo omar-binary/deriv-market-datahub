@@ -153,10 +153,10 @@ async def load_candles_history_to_data_lake(**kwargs):
     candle_history = {
         'style': candle_result['echo_req']['style'],
         'ticks_history': candle_result['echo_req']['ticks_history'],
-        'close': candle_result['candles'][0]['close'],
-        'high': candle_result['candles'][0]['high'],
-        'low': candle_result['candles'][0]['low'],
-        'open': candle_result['candles'][0]['open'],
+        'close': str(candle_result['candles'][0]['close']),
+        'high': str(candle_result['candles'][0]['high']),
+        'low': str(candle_result['candles'][0]['low']),
+        'open': str(candle_result['candles'][0]['open']),
         'time': candle_result['candles'][0]['epoch'],
         'pip_size': candle_result['pip_size'],
     }

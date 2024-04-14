@@ -59,7 +59,7 @@ we will be interested in:
 7- Dashboard and Visualization:
 
 - Google Looker Studio
-- Check the dashboard [here]().
+- Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
 
 ## Architecture
 
@@ -82,9 +82,9 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - Display the project IDs for your Google Cloud projects: `gcloud projects list`
 - Using the applicable project ID from the previous step, set the default project to the one in which you want to enable the API: `gcloud config set project YOUR_PROJECT_ID`
 - Display the project Number for your Google Cloud projects: `gcloud projects describe YOUR_PROJECT_ID`
-- Open `terraform.tfvars` in your text editor, and paste in the configuration below. Be sure to replace <PROJECT_ID> with your project's ID, and <PROJECT_NUMBER> project with your project's Number then save the file.
+- Open `terraform/terraform.tfvars` in your text editor, and paste in the configuration below. Be sure to replace <PROJECT_ID> with your project's ID, and <PROJECT_NUMBER> project with your project's Number then save the file.
 
-- Open `variables.tf` in your text editor, replace <market_data_bucket> default value with your selected name then save the file. (as bucket names should be unique across all GCP projects)
+- Open `terraform/variables.tf` in your text editor, replace <market_data_bucket> default value with your selected name then save the file. (as bucket names should be unique across all GCP projects)
 
 - Enable Compute Engine API: `gcloud services enable compute.googleapis.com`
 - Enable the Cloud Composer API: `gcloud services enable composer.googleapis.com`

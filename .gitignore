@@ -246,3 +246,13 @@ terraform.rc
 
 # dlt
 dlt_data/
+
+# DBT
+# these are the default directory names, adjust/add to fit your needs
+target/
+dbt_packages/
+logs/
+
+# legacy -- renamed to dbt_packages in v1
+dbt_modules/
+key/

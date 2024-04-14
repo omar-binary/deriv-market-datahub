@@ -1,0 +1,27 @@
+
+version: 2
+
+sources:
+  - name: staging
+    database: production
+    schema: staging
+    tables:
+      - name: symbols
+      - name: candles_history
+      - name: ticks_history
+
+models:
+    - name: symbols
+      description: "symbols dbt model"
+      columns:
+          - name: symbol
+            description: "The primary key for this table"
+            tests:
+                - unique
+                - not_null
+
+    - name: ticks_history
+      description: "ticks_history dbt model"
+
+    - name: candles_history
+      description: "candles_history dbt model"

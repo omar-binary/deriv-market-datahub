@@ -127,14 +127,14 @@ resource "google_service_account_iam_member" "airflow_service_agent" {
 
 resource "google_composer_environment" "airflow" {
   depends_on = [google_service_account_iam_member.airflow_service_agent]
-  name   = var.airflow_name
-  region = var.region
+  name       = var.airflow_name
+  region     = var.region
   config {
     software_config {
       image_version = "composer-2-airflow-2"
       airflow_config_overrides = {
         # core-dags_are_paused_at_creation = "True",
-        scheduler-dag_dir_list_interval  = 60
+        scheduler-dag_dir_list_interval = 60
       }
 
       pypi_packages = {
@@ -185,7 +185,7 @@ resource "google_composer_environment" "airflow" {
 
 # run local-exec after the resource is created
 resource "null_resource" "post-setup" {
-  depends_on = [google_composer_environment.airflow,  google_bigquery_dataset.staging, google_artifact_registry_repository.main]
+  depends_on = [google_composer_environment.airflow, google_bigquery_dataset.staging, google_artifact_registry_repository.main]
   provisioner "local-exec" {
     command = "/bin/bash post-setup.sh 'latest' '${var.artifact_registry_repository}' '${var.project_id}' '${var.region}' '${var.airflow_name}'"
   }

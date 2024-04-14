@@ -1,0 +1,23 @@
+market_data_hub:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account-json
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: main
+      threads: 4 # Must be a value of 1 or greater
+      location: US
+      priority: interactive
+      # These fields come from the service account json keyfile
+      keyfile_json:
+        type: "{{ env_var('BIGQUERY_TYPE') }}"
+        project_id: "{{ env_var('GCP_PROJECT_ID') }}"
+        private_key_id: "{{ env_var('BIGQUERY_PRIVATE_KEY_ID') }}"
+        private_key: "{{ env_var('BIGQUERY_PRIVATE_KEY') }}"
+        client_email: "{{ env_var('BIGQUERY_CLIENT_EMAIL') }}"
+        client_id: "{{ env_var('BIGQUERY_CLIENT_ID') }}"
+        auth_uri: "{{ env_var('BIGQUERY_AUTH_URI') }}"
+        token_uri: "{{ env_var('BIGQUERY_TOKEN_URI') }}"
+        auth_provider_x509_cert_url: "{{ env_var('BIGQUERY_AUTH_PROVIDER_X509_CERT_URL') }}"
+        client_x509_cert_url: "{{ env_var('BIGQUERY_CLIENT_X509_CERT_URL') }}"
