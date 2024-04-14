@@ -1,8 +1,17 @@
 # deriv-market-datahub
 
+- [deriv-market-datahub](#deriv-market-datahub)
+  - [Problem description](#problem-description)
+  - [Solution](#solution)
+  - [Prerequisites](#prerequisites)
+  - [Architecture](#architecture)
+  - [Setup](#setup)
+    - [Terraform](#terraform)
+    - [Composer Note](#composer-note)
+  - [Cleanup](#cleanup)
+
 ## Problem description
 
-TODO: add Problem description
 We would like to analyze the market data for indices and track daily changes in market.
 
 In order to do that we will be using the [Deriv API](https://api.deriv.com/) to fetch the needed data. The Deriv API provides a way to fetch the market data for indices and other assets. you may refer to the API documentation [here](https://api.deriv.com/api-explorer).
@@ -23,49 +32,6 @@ we will be interested in:
 
 - Finally, we will create a dashboard in Data Studio to visualize the data.
 
-## Tools and Technologies
-
-1- Cloud Services
-
-- Google Cloud Platform (GCP)
-- Terraform (IaC)
-- `local-exec` provisioner (for running local scripts to fully automate the setup)
-
-2- Data Extraction and Ingestion:
-
-- WebSocket API
-- Deriv API
-- Artifacts Registry (Docker Image)
-- DLT (Data Load Tool)
-
-3- Data Lake:
-
-- Google Cloud Storage (GCS)
-
-4- Data Warehousing:
-
-- Google BigQuery (BQ)
-
-5- Data Transformations and Processing:
-
-- Airflow (Google Cloud Composer)
-
-6- Orchestration and Automation:
-
-- Airflow (Google Cloud Composer)
-- KubernetesPodOperator
-- GCSToBigQueryOperator
-
-7- Dashboard and Visualization:
-
-- Google Looker Studio
-- Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
-
-## Architecture
-
-TODO: add Architecture diagram
-
-
 ## Prerequisites
 
 A Google Cloud Platform account. If you do not have a [GCP account](https://console.cloud.google.com/cloud-resource-manager), create one now from [here](https://console.cloud.google.com/projectcreate).
@@ -73,6 +39,10 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 - The [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed locally.
 - [Terraform](https://developer.hashicorp.com/terraform/install) 0.15.3+ installed locally.
 - [Docker](https://www.docker.com/products/docker-desktop/) installed locally.
+
+## Architecture
+
+[Check the full architecture here](Architecture.md)
 
 ## Setup
 
