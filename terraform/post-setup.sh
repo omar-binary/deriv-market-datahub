@@ -28,3 +28,17 @@ gcloud composer environments storage dags import \
 gcloud composer environments storage dags import \
 --environment $COMPOSER_NAME  --location $GCP_REGION \
 --source airflow/load_market_candles_history_data.py && echo 'load_market_candles_history_data loaded'
+
+## dbt dags
+
+gcloud composer environments storage dags import \
+--environment $COMPOSER_NAME  --location $GCP_REGION \
+--source airflow/dbt_create_static_model.py && echo 'dbt_create_static_model loaded'
+
+gcloud composer environments storage dags import \
+--environment $COMPOSER_NAME  --location $GCP_REGION \
+--source airflow/dbt_create_ticks_model.py && echo 'dbt_create_ticks_model loaded'
+
+gcloud composer environments storage dags import \
+--environment $COMPOSER_NAME  --location $GCP_REGION \
+--source airflow/dbt_create_candles_model.py && echo 'dbt_create_candles_model loaded'

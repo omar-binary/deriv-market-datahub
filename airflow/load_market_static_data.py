@@ -72,12 +72,10 @@ with DAG(
             autodetect=True,
         )
 
-        extract_dimension >> load_bq_from_data_lake
+        trigger_dbt_dag = TriggerDagRunOperator(
+            task_id=f'trigger_dbt_dag_{dimension}',
+            trigger_dag_id='dbt_create_static_model',
+            reset_dag_run=True,
+        )
 
-    trigger_dbt_dag = TriggerDagRunOperator(
-        task_id='trigger_dbt_dag',
-        trigger_dag_id='dbt_create_model',
-        reset_dag_run=True,
-    )
-
-    load_bq_from_data_lake >> trigger_dbt_dag
+        extract_dimension >> load_bq_from_data_lake >> trigger_dbt_dag

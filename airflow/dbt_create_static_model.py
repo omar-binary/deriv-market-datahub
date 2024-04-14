@@ -18,9 +18,9 @@ default_args = {
     'retries': 5,
     'retry_delay': timedelta(minutes=1),
 }
-# TODO: update it to be triggered from the other dag
+
 with DAG(
-    dag_id='dbt_create_model',
+    dag_id='dbt_create_static_model',
     catchup=False,
     default_args=default_args,
     start_date=datetime(2024, 4, 1),
@@ -32,7 +32,7 @@ with DAG(
         namespace='composer-user-workloads',
         image=f'{os.environ["GCP_REGION"]}-docker.pkg.dev/{os.environ["GCP_PROJECT_ID"]}/main/dbt_builder:latest',
         cmds=['dbt', 'run'],
-        # arguments=['--resource_name', dimension],
+        arguments=['--select', 'symbols'],
         name='dbt_test',
         task_id='dbt_test',
         config_file='/home/airflow/composer_kube_config',

@@ -10,12 +10,12 @@
 
 WITH source_data AS (
 
-    SELECT ticks_history AS symbol
+    SELECT t.ticks_history AS symbol
          , style
          , pip_size
          , CAST(price AS NUMERIC) AS price
          , DATE(TIMESTAMP_SECONDS(time)) AS date
-      FROM staging.ticks_history
+      FROM staging.ticks_history AS t
 )
 
 SELECT *
