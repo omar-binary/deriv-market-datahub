@@ -31,6 +31,7 @@ we will be interested in:
 - Next modelling our data using [dbt](https://www.getdbt.com/), dbt is a command line tool that enables data analysts and engineers to transform data in their warehouse more effectively.
 
 - Finally, we will create a dashboard in Data Studio to visualize the data.
+- Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
 
 ## Prerequisites
 
