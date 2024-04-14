@@ -83,3 +83,7 @@ TODO: add Architecture diagram
 ### Google Looker Studio
 
 Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
+
+![dashboard](images/dashboard.png)
+
+![dashboard_example](images/dashboard_example.png)

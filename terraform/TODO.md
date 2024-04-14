@@ -26,10 +26,12 @@
 - create dbt models [done]
 - Add dbt core and call it from airflow using docker operator (or just load data into BQ, using airflow operator) [done]
 - Use DBT to move data from staging to `main` schema [done]
-- Create a dashboard in data studio [TODO: !!!!!]
+- Create a dashboard in data studio [done]
 
 - make bucket name as variable and pass it to airflow and update it in the dag [done]
 - add note for the bucket name, as bucket name should be unique across all GCP projects [done]
 
 - change symbol_type empty value to be replace with `other`  [done]
 - tick history: convert time to timestamp [done]
+
+- add architecture diagram [!!!]
