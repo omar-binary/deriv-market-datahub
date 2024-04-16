@@ -12,26 +12,25 @@
 
 ## Problem description
 
-We would like to analyze the market data for indices and track daily changes in market.
+We would like to analyze the market data for indices and track daily market changes.
 
-In order to do that we will be using the [Deriv API](https://api.deriv.com/) to fetch the needed data. The Deriv API provides a way to fetch the market data for indices and other assets. you may refer to the API documentation [here](https://api.deriv.com/api-explorer).
-we will be interested in:
+We will leverage the [Deriv API](https://api.deriv.com/) to retrieve the necessary market data. The Deriv API provides a way to fetch market data for indices and various other assets. Refer to the API documentation [here](https://api.deriv.com/api-explorer) for more details.
+
+Data of Interest:
 
 - Dimensions: **Symbol**, **Country**, **Asset**
-- **Closing tick** for couple of selective group of active symbols and store them in BigQuery. We would also like to store the historical data for the last 30 days for each symbol in BigQuery.
-- **Daily candle** data for the last 30 days for each of those symbols in BigQuery.
+- **Closing tick** Our primary interest is capturing closing tick data for a select group of actively traded symbols, which will be stored in BigQuery.
+- **Daily candle** data for the past 30 days for each symbol.
 
 ## Solution
 
-- We are looking to extract market data then store it in BigQuery for further analysis which will be used to create a dashboard in Data Studio.
-- Starting with create a data pipeline that will fetch the last tick for some active symbols and store them in [GCS](https://cloud.google.com/storage?hl=en) which will be our data lake. We would also like to store the historical data for the last 30 days for each symbol then we will load it into our data-warehouse which is BigQuery.
-
-- The data pipeline will be created using Google Cloud Composer, which is a fully managed workflow orchestration service that empowers you to author, schedule, and monitor pipelines that span across clouds and on-premises data centers.
-
-- Next modelling our data using [dbt](https://www.getdbt.com/), dbt is a command line tool that enables data analysts and engineers to transform data in their warehouse more effectively.
-
+- The plan is to extract market data, store it in BigQuery for further analysis, and create a dashboard in Data Studio.
+- To start, we will create a data pipeline that fetches the last tick for some active symbols and stores them in [GCS](https://cloud.google.com/storage?hl=en) (which will act as our data lake). We also plan to store the historical data for the last 30 days for each symbol, then load it into our data warehouse, BigQuery.
+- This data pipeline will be created using Google Cloud Composer, a fully managed workflow orchestration service that empowers you to author, schedule, and monitor pipelines that span across clouds and on-premises data centers.
+- Next, we'll model our data using [dbt](https://www.getdbt.com/), a command-line tool that allows data analysts and engineers to effectively transform data in their warehouses.
 - Finally, we will create a dashboard in Data Studio to visualize the data.
 - Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
+
 
 ## Prerequisites
 
@@ -75,4 +74,4 @@ Avoid running all the dags at once, as it may exceed the worker quota limit and 
 
 - Once done run `terraform destroy` to delete the resources.
 - Make sure to delete any remaining disks, as they are not automatically deleted by Terraform. [here](https://console.cloud.google.com/compute/disks)
-- Make sure to delete Bucket created by Terraform. [here](https://console.cloud.google.com/storage/browser)
+- Make sure to delete the Bucket created by Terraform. [here](https://console.cloud.google.com/storage/browser)
