@@ -29,7 +29,7 @@ Data of Interest:
 - This data pipeline will be created using Google Cloud Composer, a fully managed workflow orchestration service that empowers you to author, schedule, and monitor pipelines that span across clouds and on-premises data centers.
 - Next, we'll model our data using [dbt](https://www.getdbt.com/), a command-line tool that allows data analysts and engineers to effectively transform data in their warehouses.
 - Finally, we will create a dashboard in Data Studio to visualize the data.
-- Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC).
+- **Check the dashboard [here](https://lookerstudio.google.com/u/0/reporting/f8385142-a03e-4f74-8bad-37ddc1cf4cc1/page/tEnnC)** 📈📊.
 
 
 ## Prerequisites
