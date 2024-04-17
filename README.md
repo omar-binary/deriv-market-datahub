@@ -44,6 +44,8 @@ A Google Cloud Platform account. If you do not have a [GCP account](https://cons
 
 [Check the full architecture here](Architecture.md)
 
+![Architecture](images/diagram.svg)
+
 ## Setup
 
 ### Terraform

@@ -16,7 +16,7 @@ variable "zone" {
 }
 
 variable "market_data_bucket" {
-  default     = "staging-market-datahub-test"
+  default     = "staging-market-datahub-01" # make sure to change this, to avoid conflicts
   description = "Data Lake bucket of market data"
 }
 
